@@ -1,0 +1,93 @@
+Sub Sazonalização()
+
+'##########################SAZONALIZAÇÃO##########################
+
+Dim vPLD(12)
+
+Sheets("MCP - ACL").Select
+PLD100 = Application.WorksheetFunction.Sum(Range("C3:C14"))
+n = 1
+L = 3
+Do Until n = 13
+vPLD(n) = Cells(L, 3)
+L = L + 1: n = n + 1
+Loop
+
+Sheets("MLP - ACL").Select
+n = 1: L = 2
+Do Until n = 13
+Cells(L, 3) = Application.WorksheetFunction.Product(12, vPLD(n), (Cells(16, 6) / PLD100))
+n = n + 1: L = L + 1
+Loop
+
+Call Viabilidade_Econômica(True)
+Sheets("MLP - ACL").Select
+
+End Sub
+
+Sub Tradicional()
+
+'###################TRADICIONAL########################################
+Sheets("MLP - ACL").Select
+L = 2
+Do Until Cells(L, 1) = ""
+Cells(L, 3) = Cells(16, 6)
+L = L + 1
+Loop
+
+Call Viabilidade_Econômica(True)
+Sheets("MLP - ACL").Select
+
+End Sub
+
+Sub Modulacao()
+
+'###################MODULAÇÃO########################################
+
+Dim vCONS(12)
+
+Sheets("MLP - ACL").Select
+CONS100 = Application.WorksheetFunction.Sum(Range("B2:B13"))
+n = 1
+L = 2
+Do Until n = 13
+vCONS(n) = Cells(L, 2)
+L = L + 1: n = n + 1
+Loop
+
+n = 1: L = 2
+Do Until n = 13
+Cells(L, 3) = Application.WorksheetFunction.Product(12, vCONS(n), (Cells(16, 6) / CONS100))
+n = n + 1: L = L + 1
+Loop
+
+Call Viabilidade_Econômica(True)
+Sheets("MLP - ACL").Select
+
+End Sub
+
+Sub Flexibilização_Mensal()
+
+'###################FLEXIBILIZAÇÃO MENSAL##############################
+
+Sheets("MLP - ACL").Select
+Flx_min = Cells(16, 6) * 0.95
+Flx_Max = Cells(16, 6) * 1.05
+L = 2
+Do Until Cells(L, 1) = ""
+If Cells(L, 2) < Flx_min Then
+Cells(L, 3) = Flx_min
+Else
+If Cells(L, 2) < Flx_Max Then
+Cells(L, 3) = Cells(L, 2)
+Else
+Cells(L, 3) = Flx_Max
+End If
+End If
+L = L + 1
+Loop
+
+Call Viabilidade_Econômica(True)
+Sheets("MLP - ACL").Select
+
+End Sub
