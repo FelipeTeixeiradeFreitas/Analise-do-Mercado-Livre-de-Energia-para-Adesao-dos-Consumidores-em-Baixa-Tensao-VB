@@ -1,0 +1,213 @@
+Sub Tarifa_branca(TUSD_P1, TUSD_INT1, TUSD_FP1, TE_P1, TE_INT1, TE_FP1, TUSD_P2, TUSD_INT2, TUSD_FP2, TE_P2, TE_INT2, TE_FP2, periodo)
+'
+' Tarifa_branca Macro
+'
+
+'
+Sheets("ANÁLISE ACR").Select
+
+
+If Cells(22, 1) = "BRANCA" And Cells(1, 2) <> "Consumo P" Then
+
+Sheets("ANÁLISE ACR").Select
+
+Columns(5).Insert
+Columns(5).Insert
+Columns(4).Insert
+Columns(4).Insert
+Columns(3).Insert
+Columns(3).Insert
+
+Cells(1, 2) = "Consumo P": Cells(1, 3) = "Consumo INT": Cells(1, 4) = "Consumo FP": Cells(1, 5) = "TUSD P": Cells(1, 6) = "TUSD INT": Cells(1, 7) = "TUSD FP": Cells(1, 8) = "TE P": Cells(1, 9) = "TE INT": Cells(1, 10) = "TE FP"
+
+L = 2
+Do Until Cells(L, 1) = ""
+If L < periodo Then Cells(L, 5) = TUSD_P1: Cells(L, 6) = TUSD_INT1: Cells(L, 7) = TUSD_FP1: Cells(L, 8) = TE_P1: Cells(L, 9) = TE_INT1: Cells(L, 10) = TE_FP1
+If L >= periodo Then Cells(L, 5) = TUSD_P2: Cells(L, 6) = TUSD_INT2: Cells(L, 7) = TUSD_FP2: Cells(L, 8) = TE_P2: Cells(L, 9) = TE_INT2: Cells(L, 10) = TE_FP2
+
+L = L + 1
+
+Loop
+
+    Range("M2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=((RC[-11]*RC[-8]+RC[-10]*RC[-7]+RC[-9]*RC[-6])/1000)"
+    Range("N2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=((RC[-12]*RC[-6]+RC[-11]*RC[-5]+RC[-10]*RC[-4])/1000)"
+    Range("O2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(RC[-4]=""verde"",0,IF(RC[-4]=""amarelo"",((RC[-13]+RC[-12]+RC[-11])*0.013),IF(RC[-4]=""vermelho ptm I"",((RC[-13]+RC[-12]+RC[-11])*0.041),(RC[-13]+RC[-12]+RC[-11])*0.062)))"
+    Range("O2").Select
+    Range("M2:O2").Select
+    Selection.AutoFill Destination:=Range("M2:O13"), Type:=xlFillDefault
+    Range("M2:O13").Select
+
+Sheets("MLP - ACL").Select
+
+    Range("B2").Select
+    ActiveCell.FormulaR1C1 = "=SUM('ANÁLISE ACR'!RC:RC[2])"
+    Range("B2").Select
+    Selection.AutoFill Destination:=Range("B2:B13"), Type:=xlFillDefault
+    Range("B2:B13").Select
+
+Sheets("ANÁLISE ACL").Select
+
+Columns(6).Insert
+Columns(6).Insert
+Cells(1, 5) = "TUSD P": Cells(1, 6) = "TUSD INT": Cells(1, 7) = "TUSD FP"
+
+L = 2
+Do Until Cells(L, 1) = ""
+If L < periodo Then Cells(L, 5) = TUSD_P1: Cells(L, 6) = TUSD_INT1: Cells(L, 7) = TUSD_FP1
+If L >= periodo Then Cells(L, 5) = TUSD_P2: Cells(L, 6) = TUSD_INT2: Cells(L, 7) = TUSD_FP2
+L = L + 1
+Loop
+
+
+Sheets("VIABILIDADE ECONÔMICA").Select
+Cells(1, 9) = "Tarifa Branca"
+Sheets("ANÁLISE ACR").Select
+
+Else
+MsgBox "Configuração já está ajustada para tarifa branca"
+End If
+
+End Sub
+
+Sub Tarifa_convencional(TUSD_C1, TE_C1, TUSD_C2, TE_C2, periodo)
+'
+' Tarifa_branca Macro
+'
+
+'
+Sheets("ANÁLISE ACR").Select
+
+If Cells(22, 1) = "CONVENCIONAL" And Cells(1, 2) <> "Consumo (kWh)" Then
+
+
+Columns(9).Delete
+Columns(9).Delete
+Columns(6).Delete
+Columns(6).Delete
+Columns(3).Delete
+Columns(3).Delete
+
+Cells(1, 2) = "Consumo (kWh)": Cells(1, 3) = "TUSD (R$/MWh)": Cells(1, 4) = "TE (R$/MWh)"
+
+L = 2
+Do Until Cells(L, 1) = ""
+If L < periodo Then Cells(L, 3) = TUSD_C1: Cells(L, 4) = TE_C1
+If L >= periodo Then Cells(L, 3) = TUSD_C2: Cells(L, 4) = TE_C2
+
+L = L + 1
+
+Loop
+
+    Range("G2").Select
+    ActiveCell.FormulaR1C1 = "=((RC[-5]*RC[-4])/1000)"
+    Range("H2").Select
+    ActiveCell.FormulaR1C1 = "=((RC[-6]*RC[-4])/1000)"
+    Range("I2").Select
+    ActiveCell.FormulaR1C1 = _
+        "=IF(RC[-4]=""verde"",0,IF(RC[-4]=""amarelo"",(RC[-7]*0.013),IF(RC[-4]=""vermelho ptm I"",(RC[-7]*0.041),(RC[-7]*0.062))))"
+    Range("G2:I2").Select
+    Selection.AutoFill Destination:=Range("G2:I13"), Type:=xlFillDefault
+    Range("G2:I13").Select
+    Range("I5").Select
+
+Sheets("MLP - ACL").Select
+
+    Range("B2").Select
+
+
+Sheets("ANÁLISE ACL").Select
+
+Columns(6).Delete
+Columns(6).Delete
+Cells(1, 5) = "TUSD Total"
+
+L = 2
+Do Until Cells(L, 1) = ""
+If L < periodo Then Cells(L, 5) = TUSD_C1
+If L >= periodo Then Cells(L, 5) = TUSD_C2
+
+L = L + 1
+Loop
+
+Else
+MsgBox "Configuração já está ajustada para tarifa Convencional"
+End If
+
+Sheets("VIABILIDADE ECONÔMICA").Select
+
+Cells(1, 9) = "Tarifa Convencional"
+
+Sheets("ANÁLISE ACR").Select
+
+End Sub
+
+Sub executar()
+
+Dim periodo As Integer
+Sheets("ANÁLISE ACR").Select
+
+
+concessionaria = Cells(18, 1): subgrupo = Cells(20, 1): modalidade = Cells(22, 1)
+
+If concessionaria = "CELESC" Or concessionaria = "CEEE" Or concessionaria = "COPEL" Then condicao = 1
+If subgrupo = "B1" Or subgrupo = "B2" Or subgrupo = "B3" Then condicao = condicao + 1
+If modalidade = "BRANCA" Or modalidade = "CONVENCIONAL" Then condicao = condicao + 1
+
+If condicao = 3 Then
+Sheets("ANÁLISE PLD").Select
+L = 5
+Do Until L = 17
+If Cells(L, 33) = subgrupo Then
+LM = L
+End If
+L = L + 1
+Loop
+
+C = 35
+Do Until C = 41
+If Cells(2, C) = concessionaria Then
+CM = C
+End If
+C = C + 1
+Loop
+'-----------------------------------
+TUSD_P1 = Cells(LM, CM)
+TUSD_INT1 = Cells(LM + 1, CM)
+TUSD_FP1 = Cells(LM + 2, CM)
+TUSD_C1 = Cells(LM + 3, CM)
+
+TE_P1 = Cells(LM, CM + 1)
+TE_INT1 = Cells(LM + 1, CM + 1)
+TE_FP1 = Cells(LM + 2, CM + 1)
+TE_C1 = Cells(LM + 3, CM + 1)
+
+TUSD_P2 = Cells(LM + 14, CM)
+TUSD_INT2 = Cells(LM + 15, CM)
+TUSD_FP2 = Cells(LM + 16, CM)
+TUSD_C2 = Cells(LM + 17, CM)
+
+TE_P2 = Cells(LM + 14, CM + 1)
+TE_INT2 = Cells(LM + 15, CM + 1)
+TE_FP2 = Cells(LM + 16, CM + 1)
+TE_C2 = Cells(LM + 17, CM + 1)
+'-----------------------------------
+
+If concessionaria = "CELESC" Then periodo = 9
+If concessionaria = "CEEE" Then periodo = 12
+If concessionaria = "COPEL" Then periodo = 7
+
+'-----------------------------------
+
+If modalidade = "BRANCA" Then Call Tarifa_branca(TUSD_P1, TUSD_INT1, TUSD_FP1, TE_P1, TE_INT1, TE_FP1, TUSD_P2, TUSD_INT2, TUSD_FP2, TE_P2, TE_INT2, TE_FP2, periodo)
+If modalidade = "CONVENCIONAL" Then Call Tarifa_convencional(TUSD_C1, TE_C1, TUSD_C2, TE_C2, periodo)
+Call RETIFICAR
+Else
+MsgBox "especificaçôes incorretas"
+End If
+End Sub
