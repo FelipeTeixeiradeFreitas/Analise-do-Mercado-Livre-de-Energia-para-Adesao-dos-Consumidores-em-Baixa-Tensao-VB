@@ -1,0 +1,54 @@
+Sub Conditional_Value_at_Risk()
+
+
+'######################CVAR###########################################
+Dim v_max(100, 12)
+Dim v_min(100, 12)
+Dim media_max(12)
+Dim media_min(12)
+Dim amostras As Integer
+Sheets("ANÁLISE PLD").Select
+ m = 1
+L = 2
+
+'------------coleta de amostras---------------------------
+amostras = InputBox("informe o número de amostras")
+Do Until amostras < 101
+MsgBox "Número de amostras muito elevada"
+amostras = InputBox("informe o número de amostras")
+Loop
+Range("T27").Value = amostras
+'----------------------------------------------------------
+
+Do Until m > 12
+
+Range(Cells(L, 2), Cells(L + 743, 2)).Select
+n = 1
+
+Do Until n > amostras
+
+'-------armazenamento---------
+v_max(n, m) = Application.WorksheetFunction.Large(Range(Cells(L + 1, 2), Cells(L + 744, 2)), n)
+v_min(n, m) = Application.WorksheetFunction.Small(Range(Cells(L + 1, 2), Cells(L + 744, 2)), n)
+'---------média---------------
+media_max(m) = v_max(n, m) / amostras + media_max(m)
+media_min(m) = v_min(n, m) / amostras + media_min(m)
+'-----------------------------
+n = n + 1
+
+Loop
+
+L = L + 743
+m = m + 1
+
+Loop
+
+m = 1: L = 29
+Do Until m > 12
+Cells(L, 18) = media_min(m): Cells(L, 20) = media_max(m)
+m = m + 1: L = L + 1
+Loop
+
+Cells(1, 6).Select
+
+End Sub
