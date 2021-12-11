@@ -1,0 +1,99 @@
+Function periodo(L)
+
+Dim a As Integer
+a = 19
+m = (L - 1) Mod 12
+n = (L - 1) / 12
+a = 19 + n
+If m > 5 Or m = 0 Then a = a - 1
+
+If m = 1 Then periodo = " Jan - " & a
+If m = 2 Then periodo = " Fev - " & a
+If m = 3 Then periodo = " Mar - " & a
+If m = 4 Then periodo = " Abr - " & a
+If m = 5 Then periodo = " Mai - " & a
+If m = 6 Then periodo = " Jun - " & a
+If m = 7 Then periodo = " Jul - " & a
+If m = 8 Then periodo = " Ago - " & a
+If m = 9 Then periodo = " Set - " & a
+If m = 10 Then periodo = " Out - " & a
+If m = 11 Then periodo = " Nov - " & a
+If m = 0 Then periodo = " Dez - " & a
+If Cells(19, 1) <> Null Then Cells(19, 1) = " Jun - 20"
+
+End Function
+
+Function bordas()
+    Range("A2").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    With Selection.Borders
+        .LineStyle = xlContinuous
+        .Weight = xlThin
+    End With
+End Function
+
+Function apagar()
+    Rows("5:5").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Delete Shift:=xlUp
+End Function
+
+Function Viabilidade_Econômica(juros)
+Sheets("VIABILIDADE ECONÔMICA").Select
+Call data_cleaning
+If juros = True Then Call apagar
+VP = Cells(3, 5): VF = Cells(3, 6)
+L = 5
+
+Do Until VF > 0 Or L = 300
+
+'preenchimento coluna 1
+Cells(L, 1) = periodo(L)
+'preenchimento coluna 2
+If Cells(1, 9) = "Tarifa Convencional" Then
+If L <= 13 Then Cells(L, 2) = Worksheets("ANÁLISE ACR").Cells(L, 11)
+If L > 13 Then Cells(L, 2) = Cells(L - 12, 2)
+End If
+If Cells(1, 9) = "Tarifa Branca" Then
+If L <= 13 Then Cells(L, 2) = Worksheets("ANÁLISE ACR").Cells(L, 17)
+If L > 13 Then Cells(L, 2) = Cells(L - 12, 2)
+End If
+'preenchimento coluna 3
+If Cells(1, 9) = "Tarifa Convencional" Then
+If L <= 13 Then Cells(L, 3) = Worksheets("ANÁLISE ACL").Cells(L, 8)
+End If
+If Cells(1, 9) = "Tarifa Branca" Then
+If L <= 13 Then Cells(L, 3) = Worksheets("ANÁLISE ACL").Cells(L, 10)
+End If
+If L > 13 Then Cells(L, 3) = Cells(L - 12, 3)
+'-------------------
+Cells(L, 5) = (Cells(L, 2) - Cells(L, 3) - Cells(L, 4)) * (1 + (Cells(L, 7) / 100))
+Cells(L, 6) = Cells(L - 1, 6) + Cells(L, 5)
+VF = Cells(L, 6)
+If juros = True Then Cells(L, 7) = 0.01
+'-------------------
+
+L = L + 1
+
+Loop
+
+Call bordas
+
+If L = 400 Then MsgBox "projeto inviável"
+
+End Function
+
+Function data_cleaning()
+
+    ActiveWindow.SmallScroll Down:=-12
+    Rows("5:5").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Delete Shift:=xlUp
+
+End Function
+
+Sub gerar_lista()
+Viabilidade_Econômica (False)
+End Sub
